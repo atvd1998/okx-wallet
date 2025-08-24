@@ -1,5 +1,5 @@
 package service
 
 type OKXRepository interface {
-	GetConnection()
+	GetAPIStatus() (bool, error)
 }

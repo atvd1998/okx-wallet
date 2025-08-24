@@ -9,6 +9,11 @@ type Config struct {
 	App struct {
 		HTTPAddr string `env:"HTTP_ADDR" envDefault:""`
 	}
+	OKX struct {
+		AccessKey  string `env:"OKX_ACCESS_KEY" envDefault:""`
+		PassPharse string `env:"OKX_PASSPHARSE" envDefault:""`
+		Url        string `env:"OKX_URL" envDefault:""`
+	}
 }
 
 func Load() (*Config, error) {

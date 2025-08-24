@@ -2,11 +2,12 @@ package cmd
 
 import (
 	"context"
-	"log"
 	"net/http"
 	"okx-wallet/config"
 	"okx-wallet/internal/controller"
+	"okx-wallet/internal/repository"
 	"okx-wallet/internal/service"
+	"okx-wallet/pkg/logger"
 
 	"github.com/labstack/echo/v4"
 	"github.com/spf13/cobra"
@@ -39,20 +40,21 @@ func start(
 	conf *config.Config,
 	ctrl *controller.Controller,
 ) {
+	logger := logger.MustNamed("service")
 	e := echo.New()
 	registerRoute(e, ctrl)
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
 			go func() {
-				log.Printf("Starting HTTP server on %s", conf.App.HTTPAddr)
+				logger.Infow("Starting HTTP server", "addr", conf.App.HTTPAddr)
 				if err := e.Start(conf.App.HTTPAddr); err != nil && err != http.ErrServerClosed {
-					log.Fatalf("Failed to start server: %v", err)
+					logger.Fatalw("Error starting HTTP server", "error", err)
 				}
 			}()
 			return nil
 		},
 		OnStop: func(ctx context.Context) error {
-			log.Print("Stopping HTTP server")
+			logger.Info("Shutting down HTTP server")
 			return e.Shutdown(ctx)
 		},
 	})
@@ -65,6 +67,7 @@ func invoke(invokers ...any) *fx.App {
 		fx.Provide(
 			controller.NewController,
 			fx.Annotate(service.NewOKXService, fx.As(new(controller.OKXService))),
+			fx.Annotate(repository.NewOKXRepository, fx.As(new(service.OKXRepository))),
 		),
 		fx.Supply(conf),
 		fx.Invoke(invokers...),
