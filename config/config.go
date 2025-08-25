@@ -10,9 +10,11 @@ type Config struct {
 		HTTPAddr string `env:"HTTP_ADDR" envDefault:""`
 	}
 	OKX struct {
+		APIKey     string `env:"OKX_API_KEY" envDefault:""`
+		SecretKey  string `env:"OKX_SECRET_KEY" envDefault:""`
 		AccessKey  string `env:"OKX_ACCESS_KEY" envDefault:""`
 		PassPharse string `env:"OKX_PASSPHARSE" envDefault:""`
-		Url        string `env:"OKX_URL" envDefault:""`
+		Web3Url    string `env:"OKX_WEB3_URL" envDefault:""`
 	}
 }
 
